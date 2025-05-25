@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Dimensions, Platform } from 'react-native';
 import { Ionicons, MaterialIcons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
+import { colors, headerTheme, cardTheme, buttonTheme } from '../constants/colors';
 
 export default function HomeScreen({ navigation }) {
   const [date, setDate] = useState(new Date());
@@ -38,7 +39,7 @@ export default function HomeScreen({ navigation }) {
         <Text style={styles.headerTitle}>{`${month} ${year}`}</Text>
         <View style={styles.headerButtons}>
           <TouchableOpacity style={styles.headerButton}>
-            <Ionicons name="settings-outline" size={32} color="#FF7F50" />
+            <Ionicons name="settings-outline" size={32} color={headerTheme.icon} />
           </TouchableOpacity>
         </View>
       </View>
@@ -47,14 +48,14 @@ export default function HomeScreen({ navigation }) {
         {/* Relatório Section */}
         <View style={styles.section}>
           <View style={styles.sectionTitleContainer}>
-            <MaterialCommunityIcons name="notebook-outline" size={32} color="#2B7C85" />
+            <MaterialCommunityIcons name="notebook-outline" size={32} color={colors.secondary} />
             <Text style={styles.sectionTitle}>Relatório</Text>
             <View style={styles.actionButtons}>
               <TouchableOpacity style={styles.addButton}>
-                <Ionicons name="paper-plane-outline" size={32} color="#FF7F50" />
+                <Ionicons name="paper-plane-outline" size={32} color={colors.action} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.addButton}>
-                <MaterialIcons name="list-alt" size={32} color="#FF7F50" />
+                <MaterialIcons name="list-alt" size={32} color={colors.action} />
               </TouchableOpacity>
             </View>
           </View>
@@ -65,7 +66,7 @@ export default function HomeScreen({ navigation }) {
               <View style={[styles.statRow, styles.statRowLarge]}>
                 <View style={styles.statContent}>
                   <View style={styles.statIconContainer}>
-                    <Ionicons name="time-outline" size={40} color="#2B7C85" />
+                    <Ionicons name="time-outline" size={40} color={colors.secondary} />
                   </View>
                   <View style={styles.statTextContainer}>
                     <Text style={styles.statLabel}>Horas:</Text>
@@ -77,7 +78,7 @@ export default function HomeScreen({ navigation }) {
               <View style={[styles.statRow, styles.statRowLarge]}>
                 <View style={styles.statContent}>
                   <View style={styles.statIconContainer}>
-                    <FontAwesome5 name="graduation-cap" size={36} color="#2B7C85" />
+                    <FontAwesome5 name="graduation-cap" size={36} color={colors.secondary} />
                   </View>
                   <View style={styles.statTextContainer}>
                     <Text style={styles.statLabel}>Estudos:</Text>
@@ -95,26 +96,26 @@ export default function HomeScreen({ navigation }) {
                 style={styles.navButton}
                 onPress={goToPreviousMonth}
               >
-                <Ionicons name="chevron-back" size={32} color="#FF7F50" />
+                <Ionicons name="chevron-back" size={32} color={colors.action} />
               </TouchableOpacity>
               <TouchableOpacity 
                 style={styles.navButton}
                 onPress={showDatepicker}
               >
-                <Ionicons name="calendar-outline" size={32} color="#FF7F50" />
+                <Ionicons name="calendar-outline" size={32} color={colors.action} />
               </TouchableOpacity>
               <TouchableOpacity 
                 style={styles.navButton}
                 onPress={goToNextMonth}
               >
-                <Ionicons name="chevron-forward" size={32} color="#FF7F50" />
+                <Ionicons name="chevron-forward" size={32} color={colors.action} />
               </TouchableOpacity>
             </View>
             <TouchableOpacity 
               style={[styles.navButton, styles.addReportButton]}
               onPress={() => navigation.navigate('AddReport')}
             >
-              <Ionicons name="add" size={32} color="#FFFFFF" />
+              <Ionicons name="add" size={32} color={colors.white} />
             </TouchableOpacity>
           </View>
         </View>
@@ -181,10 +182,10 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
   },
   header: {
-    backgroundColor: '#2B7C85',
+    backgroundColor: headerTheme.background,
     paddingTop: 25,
     paddingBottom: 12,
     paddingHorizontal: 20,
@@ -193,7 +194,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    color: '#fff',
+    color: headerTheme.text,
     fontSize: 30,
     fontWeight: 'bold',
   },
@@ -212,7 +213,7 @@ const styles = StyleSheet.create({
   },
   section: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
   },
   sectionTitleContainer: {
     flexDirection: 'row',
@@ -220,12 +221,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: colors.border,
   },
   sectionTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#2B7C85',
+    color: colors.text.primary,
     marginLeft: 15,
     flex: 1,
   },
@@ -249,7 +250,7 @@ const styles = StyleSheet.create({
     gap: 15,
   },
   statRow: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: cardTheme.background,
     borderRadius: 12,
     shadowColor: '#000',
     shadowOffset: {
@@ -270,7 +271,7 @@ const styles = StyleSheet.create({
   statIconContainer: {
     width: 50,
     height: 50,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
@@ -288,13 +289,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   statLabel: {
-    color: '#2B7C85',
+    color: colors.text.primary,
     fontSize: 20,
     fontWeight: '500',
     marginBottom: 2,
   },
   statValue: {
-    color: '#2B7C85',
+    color: colors.text.primary,
     fontSize: 28,
     fontWeight: 'bold',
   },
@@ -306,8 +307,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: '#e0e0e0',
-    backgroundColor: '#f8f9fa',
+    borderColor: colors.border,
+    backgroundColor: colors.background,
   },
   monthControlGroup: {
     flexDirection: 'row',
@@ -315,7 +316,7 @@ const styles = StyleSheet.create({
   },
   navButton: {
     padding: 10,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
@@ -328,10 +329,10 @@ const styles = StyleSheet.create({
   },
   addReportButton: {
     paddingHorizontal: 25,
-    backgroundColor: '#FF7F50',
+    backgroundColor: buttonTheme.primary.background,
   },
   goalsSection: {
-    backgroundColor: '#2B7C85',
+    backgroundColor: headerTheme.background,
     paddingVertical: 10,
     paddingHorizontal: 15,
   },
@@ -343,7 +344,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   goalsTitle: {
-    color: '#fff',
+    color: headerTheme.text,
     fontSize: 28,
     marginLeft: 15,
     fontWeight: 'bold',
@@ -359,7 +360,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 15,
     paddingHorizontal: 15,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: {
@@ -375,14 +376,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   goalLabel: {
-    color: '#2B7C85',
+    color: colors.text.primary,
     fontSize: 20,
     marginLeft: 15,
     flex: 1,
     fontWeight: '500',
   },
   goalValue: {
-    color: '#2B7C85',
+    color: colors.text.primary,
     fontSize: 24,
     fontWeight: 'bold',
     minWidth: 100,

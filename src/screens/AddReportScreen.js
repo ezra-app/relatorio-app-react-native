@@ -13,11 +13,13 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
+import { colors, headerTheme, inputTheme, buttonTheme } from '../constants/colors';
 
 export default function AddReportScreen({ navigation }) {
   const [date, setDate] = useState(new Date());
   const [hours, setHours] = useState({ hours: 0, minutes: 0 });
   const [studies, setStudies] = useState('0');
+  const [observations, setObservations] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showHoursPicker, setShowHoursPicker] = useState(false);
 
@@ -120,7 +122,7 @@ export default function AddReportScreen({ navigation }) {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={32} color="#fff" />
+          <Ionicons name="arrow-back" size={32} color={headerTheme.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Novo Relatório</Text>
       </View>
@@ -133,7 +135,7 @@ export default function AddReportScreen({ navigation }) {
           {/* Data */}
           <View style={styles.inputGroup}>
             <View style={styles.labelContainer}>
-              <Ionicons name="calendar-outline" size={28} color="#2B7C85" />
+              <Ionicons name="calendar-outline" size={28} color={colors.secondary} />
               <Text style={styles.label}>Data:</Text>
             </View>
             <TouchableOpacity 
@@ -149,7 +151,7 @@ export default function AddReportScreen({ navigation }) {
           {/* Horas */}
           <View style={styles.inputGroup}>
             <View style={styles.labelContainer}>
-              <Ionicons name="time-outline" size={28} color="#2B7C85" />
+              <Ionicons name="time-outline" size={28} color={colors.secondary} />
               <Text style={styles.label}>Horas:</Text>
             </View>
             <TouchableOpacity 
@@ -163,7 +165,7 @@ export default function AddReportScreen({ navigation }) {
           {/* Estudos */}
           <View style={styles.inputGroup}>
             <View style={styles.labelContainer}>
-              <Ionicons name="school-outline" size={28} color="#2B7C85" />
+              <Ionicons name="school-outline" size={28} color={colors.secondary} />
               <Text style={styles.label}>Estudos:</Text>
             </View>
             <View style={styles.input}>
@@ -177,6 +179,25 @@ export default function AddReportScreen({ navigation }) {
                 keyboardType="number-pad"
                 placeholder="0"
                 placeholderTextColor="#999"
+              />
+            </View>
+          </View>
+
+          {/* Observações */}
+          <View style={styles.inputGroup}>
+            <View style={styles.labelContainer}>
+              <Ionicons name="document-text-outline" size={28} color={colors.secondary} />
+              <Text style={styles.label}>Observações:</Text>
+            </View>
+            <View style={[styles.input, { minHeight: 100 }]}>
+              <TextInput
+                style={[styles.studiesInput, { height: 90, textAlignVertical: 'top' }]}
+                value={observations}
+                onChangeText={setObservations}
+                placeholder="Digite suas observações aqui..."
+                placeholderTextColor="#999"
+                multiline
+                numberOfLines={4}
               />
             </View>
           </View>
@@ -278,10 +299,10 @@ export default function AddReportScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
   },
   header: {
-    backgroundColor: '#2B7C85',
+    backgroundColor: headerTheme.background,
     paddingTop: 25,
     paddingBottom: 12,
     paddingHorizontal: 20,
@@ -294,7 +315,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
+    color: headerTheme.text,
   },
   content: {
     flex: 1,
@@ -313,40 +334,40 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 20,
-    color: '#2B7C85',
+    color: colors.text.primary,
     fontWeight: '500',
   },
   input: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: inputTheme.background,
     borderRadius: 10,
     padding: 15,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: inputTheme.border,
   },
   inputText: {
     fontSize: 18,
-    color: '#2B7C85',
+    color: inputTheme.text,
   },
   saveButton: {
-    backgroundColor: '#FF7F50',
+    backgroundColor: buttonTheme.primary.background,
     borderRadius: 10,
     padding: 15,
     alignItems: 'center',
     marginTop: 20,
   },
   saveButtonText: {
-    color: '#fff',
+    color: buttonTheme.primary.text,
     fontSize: 18,
     fontWeight: 'bold',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: colors.overlay,
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
     borderRadius: 15,
     padding: 20,
     width: '80%',
@@ -355,7 +376,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2B7C85',
+    color: colors.text.primary,
     marginBottom: 20,
   },
   hoursPickerContainer: {
@@ -374,24 +395,24 @@ const styles = StyleSheet.create({
   pickerInput: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2B7C85',
+    color: colors.text.primary,
     textAlign: 'center',
     width: 60,
     padding: 5,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: colors.border,
     borderRadius: 8,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
   },
   pickerLabel: {
     fontSize: 14,
-    color: '#666',
+    color: colors.text.secondary,
     marginTop: 5,
   },
   pickerSeparator: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2B7C85',
+    color: colors.text.primary,
   },
   modalButtons: {
     flexDirection: 'row',
@@ -405,27 +426,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalButtonCancel: {
-    backgroundColor: '#f8f9fa',
+    backgroundColor: buttonTheme.secondary.background,
     borderWidth: 1,
-    borderColor: '#2B7C85',
+    borderColor: buttonTheme.secondary.border,
   },
   modalButtonConfirm: {
-    backgroundColor: '#FF7F50',
+    backgroundColor: buttonTheme.primary.background,
   },
   modalButtonText: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#2B7C85',
+    color: colors.text.primary,
   },
   modalButtonTextCancel: {
-    color: '#2B7C85',
+    color: colors.text.primary,
   },
   modalButtonTextConfirm: {
-    color: '#fff',
+    color: buttonTheme.primary.text,
   },
   studiesInput: {
     fontSize: 18,
-    color: '#2B7C85',
+    color: colors.text.primary,
     padding: 0,
     flex: 1,
   },
