@@ -5,6 +5,7 @@ node_modules/
 
 # Expo
 .expo/
+.expo-shared/
 dist/
 web-build/
 expo-env.d.ts
@@ -68,6 +69,8 @@ android/gradle/
 android/gradlew
 android/gradlew.bat
 *.hprof
+*.apk
+*.keystore
 
 # Testing
 coverage/
@@ -83,3 +86,8 @@ temp/
 # Bundle
 *.bundle
 *.bundle.map
+
+# Outros
+*.iml
+*.xcuserstate
+*.xcuserdata
