@@ -51,10 +51,10 @@ export default function HomeScreen() {
             <Text style={styles.sectionTitle}>Relatório</Text>
             <View style={styles.actionButtons}>
               <TouchableOpacity style={styles.addButton}>
-                <Ionicons name="play" size={38} color="#FF7F50" />
+                <Ionicons name="paper-plane-outline" size={32} color="#FF7F50" />
               </TouchableOpacity>
               <TouchableOpacity style={styles.addButton}>
-                <Ionicons name="add-circle" size={38} color="#FF7F50" />
+                <MaterialIcons name="list-alt" size={32} color="#FF7F50" />
               </TouchableOpacity>
             </View>
           </View>
@@ -90,29 +90,30 @@ export default function HomeScreen() {
 
           {/* Navigation Buttons */}
           <View style={styles.navButtons}>
+            <View style={styles.monthControlGroup}>
+              <TouchableOpacity 
+                style={styles.navButton}
+                onPress={goToPreviousMonth}
+              >
+                <Ionicons name="chevron-back" size={32} color="#FF7F50" />
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.navButton}
+                onPress={showDatepicker}
+              >
+                <Ionicons name="calendar-outline" size={32} color="#FF7F50" />
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.navButton}
+                onPress={goToNextMonth}
+              >
+                <Ionicons name="chevron-forward" size={32} color="#FF7F50" />
+              </TouchableOpacity>
+            </View>
             <TouchableOpacity 
-              style={styles.navButton}
-              onPress={goToPreviousMonth}
+              style={[styles.navButton, styles.addReportButton]}
             >
-              <Ionicons name="chevron-back" size={32} color="#2B7C85" />
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.navButton}
-              onPress={showDatepicker}
-            >
-              <Ionicons name="calendar-outline" size={32} color="#2B7C85" />
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.navButton}
-              onPress={goToNextMonth}
-            >
-              <Ionicons name="chevron-forward" size={32} color="#2B7C85" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.navButton}>
-              <Ionicons name="paper-plane-outline" size={32} color="#2B7C85" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.navButton}>
-              <MaterialIcons name="list-alt" size={32} color="#2B7C85" />
+              <Ionicons name="add" size={32} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
         </View>
@@ -183,7 +184,7 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#2B7C85',
-    paddingTop: 18,
+    paddingTop: 25,
     paddingBottom: 12,
     paddingHorizontal: 20,
     flexDirection: 'row',
@@ -298,13 +299,18 @@ const styles = StyleSheet.create({
   },
   navButtons: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingVertical: 15,
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: '#e0e0e0',
     backgroundColor: '#f8f9fa',
+  },
+  monthControlGroup: {
+    flexDirection: 'row',
+    gap: 20,
   },
   navButton: {
     padding: 10,
@@ -318,6 +324,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 3,
+  },
+  addReportButton: {
+    paddingHorizontal: 25,
+    backgroundColor: '#FF7F50',
   },
   goalsSection: {
     backgroundColor: '#2B7C85',
