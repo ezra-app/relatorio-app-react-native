@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Dimensions, Pla
 import { Ionicons, MaterialIcons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
   
@@ -112,6 +112,7 @@ export default function HomeScreen() {
             </View>
             <TouchableOpacity 
               style={[styles.navButton, styles.addReportButton]}
+              onPress={() => navigation.navigate('AddReport')}
             >
               <Ionicons name="add" size={32} color="#FFFFFF" />
             </TouchableOpacity>
