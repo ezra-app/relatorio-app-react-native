@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, headerTheme } from '../constants/colors';
+import { useGoals } from '../contexts/GoalsContext';
 
 const SettingSection = ({ title, children }) => (
   <View style={styles.section}>
@@ -44,6 +45,9 @@ const SettingItem = ({ icon, title, subtitle, onPress, value }) => (
 );
 
 export default function SettingsScreen({ navigation }) {
+  const { goals, formatGoalHours } = useGoals();
+  const monthlyGoal = formatGoalHours(goals.monthlyHours).formatted;
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -74,8 +78,8 @@ export default function SettingsScreen({ navigation }) {
             icon="time-outline"
             title="Meta Mensal"
             subtitle="Total de horas por mês"
-            value="70:00"
-            onPress={() => {}}
+            value={monthlyGoal}
+            onPress={() => navigation.navigate('MonthlyGoal')}
           />
         </SettingSection>
 
@@ -85,7 +89,7 @@ export default function SettingsScreen({ navigation }) {
             icon="calendar-number-outline"
             title="Dias da Semana"
             subtitle="Definir dias regulares de atividade"
-            onPress={() => {}}
+            onPress={() => navigation.navigate('WorkDays')}
           />
         </SettingSection>
 
