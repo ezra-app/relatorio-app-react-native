@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,10 +6,15 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
+  Share,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, headerTheme } from '../constants/colors';
 import { useGoals } from '../contexts/GoalsContext';
+import { BackupService } from '../services/BackupService';
+import * as DocumentPicker from 'expo-document-picker';
 
 const SettingSection = ({ title, children }) => (
   <View style={styles.section}>
@@ -20,10 +25,11 @@ const SettingSection = ({ title, children }) => (
   </View>
 );
 
-const SettingItem = ({ icon, title, subtitle, onPress, value }) => (
+const SettingItem = ({ icon, title, subtitle, onPress, value, disabled, rightContent }) => (
   <TouchableOpacity 
     style={styles.settingItem}
     onPress={onPress}
+    disabled={disabled}
   >
     <View style={styles.settingIcon}>
       <Ionicons name={icon} size={24} color={colors.secondary} />
@@ -41,12 +47,109 @@ const SettingItem = ({ icon, title, subtitle, onPress, value }) => (
         <Ionicons name="chevron-forward" size={24} color={colors.text.secondary} />
       )}
     </View>
+    {rightContent && (
+      <View style={styles.settingRightContent}>
+        {rightContent}
+      </View>
+    )}
   </TouchableOpacity>
 );
 
 export default function SettingsScreen({ navigation }) {
   const { goals, formatGoalHours } = useGoals();
+  const [isProcessing, setIsProcessing] = useState(false);
   const monthlyGoal = formatGoalHours(goals.monthlyHours).formatted;
+
+  const handleCreateBackup = async () => {
+    try {
+      setIsProcessing(true);
+      
+      // Gera o backup
+      const backupData = await BackupService.createBackup();
+      
+      // Compartilha o backup
+      await Share.share({
+        message: backupData,
+        title: `Backup RelatorioApp - ${new Date().toLocaleDateString('pt-BR')}`,
+      });
+    } catch (error) {
+      Alert.alert(
+        'Erro',
+        'Não foi possível criar o backup. Tente novamente.'
+      );
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleRestoreBackup = async () => {
+    try {
+      setIsProcessing(true);
+
+      // Seleciona o arquivo de backup
+      const result = await DocumentPicker.getDocumentAsync({
+        type: 'text/plain',
+        copyToCacheDirectory: true,
+      });
+
+      if (result.type === 'success') {
+        // Lê o conteúdo do arquivo
+        const response = await fetch(result.uri);
+        const backupContent = await response.text();
+
+        // Valida o backup
+        if (!BackupService.validateBackup(backupContent)) {
+          Alert.alert(
+            'Erro',
+            'O arquivo selecionado não é um backup válido.'
+          );
+          return;
+        }
+
+        // Confirma a restauração
+        Alert.alert(
+          'Confirmar Restauração',
+          'Isso irá substituir todos os dados atuais. Deseja continuar?',
+          [
+            {
+              text: 'Cancelar',
+              style: 'cancel'
+            },
+            {
+              text: 'Confirmar',
+              onPress: async () => {
+                try {
+                  await BackupService.restoreBackup(backupContent);
+                  Alert.alert(
+                    'Sucesso',
+                    'Backup restaurado com sucesso! O aplicativo será reiniciado.',
+                    [
+                      {
+                        text: 'OK',
+                        onPress: () => navigation.navigate('Home')
+                      }
+                    ]
+                  );
+                } catch (error) {
+                  Alert.alert(
+                    'Erro',
+                    'Não foi possível restaurar o backup. Tente novamente.'
+                  );
+                }
+              }
+            }
+          ]
+        );
+      }
+    } catch (error) {
+      Alert.alert(
+        'Erro',
+        'Não foi possível restaurar o backup. Tente novamente.'
+      );
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -99,13 +202,21 @@ export default function SettingsScreen({ navigation }) {
             icon="cloud-upload-outline"
             title="Fazer Backup"
             subtitle="Salvar seus dados na nuvem"
-            onPress={() => {}}
+            onPress={handleCreateBackup}
+            disabled={isProcessing}
+            rightContent={
+              isProcessing && <ActivityIndicator color={colors.primary} />
+            }
           />
           <SettingItem
             icon="cloud-download-outline"
             title="Restaurar Backup"
             subtitle="Recuperar dados da nuvem"
-            onPress={() => {}}
+            onPress={handleRestoreBackup}
+            disabled={isProcessing}
+            rightContent={
+              isProcessing && <ActivityIndicator color={colors.primary} />
+            }
           />
         </SettingSection>
 
@@ -198,5 +309,8 @@ const styles = StyleSheet.create({
   settingValue: {
     fontSize: 16,
     color: colors.text.secondary,
+  },
+  settingRightContent: {
+    marginLeft: 10,
   },
 }); 
