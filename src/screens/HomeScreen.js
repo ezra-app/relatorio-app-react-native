@@ -195,7 +195,11 @@ export default function HomeScreen({ navigation }) {
           {/* Stats */}
           <View style={styles.statsContainer}>
             <View style={styles.statsWrapper}>
-              <View style={[styles.statRow, styles.statRowLarge]}>
+              <TouchableOpacity 
+                style={[styles.statRow, styles.statRowLarge]}
+                onPress={() => navigation.navigate('ReportList', { selectedDate: date })}
+                activeOpacity={0.7}
+              >
                 <View style={styles.statContent}>
                   <View style={styles.statIconContainer}>
                     <Ionicons name="time-outline" size={40} color={colors.secondary} />
@@ -205,9 +209,13 @@ export default function HomeScreen({ navigation }) {
                     <Text style={styles.statValue}>{monthlyData.totalHours}</Text>
                   </View>
                 </View>
-              </View>
+              </TouchableOpacity>
 
-              <View style={[styles.statRow, styles.statRowLarge]}>
+              <TouchableOpacity 
+                style={[styles.statRow, styles.statRowLarge]}
+                onPress={() => navigation.navigate('ReportList', { selectedDate: date })}
+                activeOpacity={0.7}
+              >
                 <View style={styles.statContent}>
                   <View style={styles.statIconContainer}>
                     <FontAwesome5 name="graduation-cap" size={36} color={colors.secondary} />
@@ -217,7 +225,7 @@ export default function HomeScreen({ navigation }) {
                     <Text style={styles.statValue}>{monthlyData.totalStudies}</Text>
                   </View>
                 </View>
-              </View>
+              </TouchableOpacity>
             </View>
           </View>
 
