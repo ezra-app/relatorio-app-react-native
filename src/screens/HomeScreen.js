@@ -202,31 +202,49 @@ export default function HomeScreen({ navigation }) {
           </View>
           
           <View style={styles.goalsContent}>
-            <View style={styles.goalsWrapper}>
-              <View style={styles.goalCard}>
-                <View style={styles.goalIconContainer}>
-                  <MaterialCommunityIcons name="target" size={32} color="#2B7C85" />
+            {goals.monthlyHours > 0 ? (
+              <View style={styles.goalsWrapper}>
+                <View style={styles.goalCard}>
+                  <View style={styles.goalIconContainer}>
+                    <MaterialCommunityIcons name="target" size={32} color="#2B7C85" />
+                  </View>
+                  <Text style={styles.goalLabel}>Meta Mensal:</Text>
+                  <Text style={styles.goalValue}>{formatGoalHours(goals.monthlyHours).formatted}</Text>
                 </View>
-                <Text style={styles.goalLabel}>Meta Mensal:</Text>
-                <Text style={styles.goalValue}>{formatGoalHours(goals.monthlyHours).formatted}</Text>
-              </View>
 
-              <View style={styles.goalCard}>
-                <View style={styles.goalIconContainer}>
-                  <MaterialCommunityIcons name="clock-time-four" size={32} color="#2B7C85" />
+                <View style={styles.goalCard}>
+                  <View style={styles.goalIconContainer}>
+                    <MaterialCommunityIcons name="clock-time-four" size={32} color="#2B7C85" />
+                  </View>
+                  <Text style={styles.goalLabel}>Meta Diária:</Text>
+                  <Text style={styles.goalValue}>{calculateDailyGoal()}</Text>
                 </View>
-                <Text style={styles.goalLabel}>Meta Diária:</Text>
-                <Text style={styles.goalValue}>{calculateDailyGoal()}</Text>
-              </View>
 
-              <View style={styles.goalCard}>
-                <View style={styles.goalIconContainer}>
-                  <MaterialCommunityIcons name="timer-sand" size={32} color="#2B7C85" />
+                <View style={styles.goalCard}>
+                  <View style={styles.goalIconContainer}>
+                    <MaterialCommunityIcons name="timer-sand" size={32} color="#2B7C85" />
+                  </View>
+                  <Text style={styles.goalLabel}>Faltam:</Text>
+                  <Text style={styles.goalValue}>{calculateRemainingHours()}</Text>
                 </View>
-                <Text style={styles.goalLabel}>Faltam:</Text>
-                <Text style={styles.goalValue}>{calculateRemainingHours()}</Text>
               </View>
-            </View>
+            ) : (
+              <View style={styles.emptyStateContainer}>
+                <View style={styles.emptyStateIconContainer}>
+                  <MaterialCommunityIcons name="rocket" size={48} color={colors.white} style={styles.emptyStateIcon} />
+                </View>
+                <Text style={styles.emptyStateTitle}>Defina Suas Metas</Text>
+                <Text style={styles.emptyStateDescription}>
+                  Configure sua meta mensal para acompanhar seu progresso e manter o foco nos seus objetivos
+                </Text>
+                <TouchableOpacity 
+                  style={styles.emptyStateButton}
+                  onPress={() => navigation.navigate('MonthlyGoal')}
+                >
+                  <Text style={styles.emptyStateButtonText}>Configurar Meta</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
         </View>
       </View>
@@ -425,6 +443,7 @@ const styles = StyleSheet.create({
   },
   goalsContent: {
     flex: 1,
+    justifyContent: 'center',
   },
   goalsWrapper: {
     gap: 15,
@@ -462,5 +481,69 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     minWidth: 100,
     textAlign: 'right',
+  },
+  emptyStateContainer: {
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 12,
+    margin: 15,
+    minHeight: 200,
+    justifyContent: 'center',
+  },
+  emptyStateIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: colors.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+    transform: [{ rotate: '45deg' }],
+  },
+  emptyStateIcon: {
+    transform: [{ rotate: '-45deg' }],
+  },
+  emptyStateTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: colors.white,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  emptyStateDescription: {
+    fontSize: 16,
+    color: colors.white,
+    textAlign: 'center',
+    marginBottom: 24,
+    opacity: 0.8,
+    lineHeight: 22,
+  },
+  emptyStateButton: {
+    backgroundColor: colors.white,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  emptyStateButtonText: {
+    color: colors.secondary,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 }); 
