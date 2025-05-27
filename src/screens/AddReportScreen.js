@@ -16,12 +16,22 @@ import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { colors, headerTheme, inputTheme, buttonTheme } from '../constants/colors';
 import { useReports } from '../contexts/ReportContext';
 
-export default function AddReportScreen({ navigation }) {
-  const { createItem } = useReports();
-  const [date, setDate] = useState(new Date());
-  const [hours, setHours] = useState({ hours: 0, minutes: 0 });
-  const [studies, setStudies] = useState('0');
-  const [observations, setObservations] = useState('');
+export default function AddReportScreen({ navigation, route }) {
+  const report = route.params?.report;
+  const isEditing = !!report;
+  
+  const { createItem, updateItem } = useReports();
+  const [date, setDate] = useState(isEditing ? new Date(report.date) : new Date());
+  const [hours, setHours] = useState(() => {
+    if (isEditing) {
+      const totalHours = Math.floor(report.duration / 60);
+      const minutes = report.duration % 60;
+      return { hours: totalHours, minutes };
+    }
+    return { hours: 0, minutes: 0 };
+  });
+  const [studies, setStudies] = useState(isEditing ? report.studyHours.toString() : '0');
+  const [observations, setObservations] = useState(isEditing ? report.observations : '');
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showHoursPicker, setShowHoursPicker] = useState(false);
 
@@ -113,7 +123,12 @@ export default function AddReportScreen({ navigation }) {
         observations: observations.trim(),
       };
 
-      await createItem(reportData);
+      if (isEditing) {
+        await updateItem(report.id, reportData);
+      } else {
+        await createItem(reportData);
+      }
+      
       navigation.goBack();
     } catch (error) {
       console.error('Erro ao salvar relatório:', error);
@@ -140,7 +155,9 @@ export default function AddReportScreen({ navigation }) {
         >
           <Ionicons name="arrow-back" size={32} color={headerTheme.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Novo Relatório</Text>
+        <Text style={styles.headerTitle}>
+          {isEditing ? 'Editar Relatório' : 'Novo Relatório'}
+        </Text>
       </View>
 
       <KeyboardAvoidingView 

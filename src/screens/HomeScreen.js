@@ -86,7 +86,10 @@ export default function HomeScreen({ navigation }) {
               <TouchableOpacity style={styles.addButton}>
                 <Ionicons name="paper-plane-outline" size={32} color={colors.action} />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.addButton}>
+              <TouchableOpacity 
+                style={styles.addButton}
+                onPress={() => navigation.navigate('ReportList', { selectedDate: date })}
+              >
                 <MaterialIcons name="list-alt" size={32} color={colors.action} />
               </TouchableOpacity>
             </View>
