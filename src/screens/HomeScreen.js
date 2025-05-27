@@ -4,6 +4,7 @@ import { Ionicons, MaterialIcons, FontAwesome5, MaterialCommunityIcons } from '@
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { colors, headerTheme, cardTheme, buttonTheme } from '../constants/colors';
 import { useReports } from '../contexts/ReportContext';
+import { useGoals } from '../contexts/GoalsContext';
 import { dateUtils } from '../utils/dateUtils';
 
 export default function HomeScreen({ navigation }) {
@@ -11,10 +12,12 @@ export default function HomeScreen({ navigation }) {
   const [show, setShow] = useState(false);
   const [monthlyData, setMonthlyData] = useState({
     totalHours: "00:00",
+    totalMinutes: 0,
     totalStudies: 0
   });
   
   const { items: reports, loadItems } = useReports();
+  const { goals, formatGoalHours } = useGoals();
   const month = date.toLocaleString('pt-BR', { month: 'long' }).replace(/^\w/, c => c.toUpperCase());
   const year = date.getFullYear();
 
@@ -40,8 +43,41 @@ export default function HomeScreen({ navigation }) {
 
     setMonthlyData({
       totalHours: dateUtils.formatDuration(totalDuration),
+      totalMinutes: totalDuration,
       totalStudies
     });
+  };
+
+  // Calcula a meta diária baseada no que falta atingir
+  const calculateDailyGoal = () => {
+    const { monthlyHours } = goals;
+    const { totalMinutes } = monthlyData;
+    
+    // Se não há meta mensal ou já atingimos a meta
+    if (monthlyHours === 0 || totalMinutes >= monthlyHours) {
+      return "00:00";
+    }
+
+    const remainingMinutes = monthlyHours - totalMinutes;
+    const today = new Date();
+    const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+    const remainingDays = lastDayOfMonth - today.getDate() + 1;
+
+    if (remainingDays <= 0) return "00:00";
+
+    const dailyMinutes = Math.ceil(remainingMinutes / remainingDays);
+    return dateUtils.formatDuration(dailyMinutes);
+  };
+
+  // Calcula quanto falta para atingir a meta
+  const calculateRemainingHours = () => {
+    const { monthlyHours } = goals;
+    const { totalMinutes } = monthlyData;
+    
+    if (monthlyHours === 0) return "00:00";
+    
+    const remainingMinutes = Math.max(0, monthlyHours - totalMinutes);
+    return dateUtils.formatDuration(remainingMinutes);
   };
 
   const showDatepicker = () => {
@@ -171,8 +207,8 @@ export default function HomeScreen({ navigation }) {
                 <View style={styles.goalIconContainer}>
                   <MaterialCommunityIcons name="target" size={32} color="#2B7C85" />
                 </View>
-                <Text style={styles.goalLabel}>Meta Total:</Text>
-                <Text style={styles.goalValue}>15:00 hrs</Text>
+                <Text style={styles.goalLabel}>Meta Mensal:</Text>
+                <Text style={styles.goalValue}>{formatGoalHours(goals.monthlyHours).formatted}</Text>
               </View>
 
               <View style={styles.goalCard}>
@@ -180,7 +216,7 @@ export default function HomeScreen({ navigation }) {
                   <MaterialCommunityIcons name="clock-time-four" size={32} color="#2B7C85" />
                 </View>
                 <Text style={styles.goalLabel}>Meta Diária:</Text>
-                <Text style={styles.goalValue}>07:30 hrs</Text>
+                <Text style={styles.goalValue}>{calculateDailyGoal()}</Text>
               </View>
 
               <View style={styles.goalCard}>
@@ -188,7 +224,7 @@ export default function HomeScreen({ navigation }) {
                   <MaterialCommunityIcons name="timer-sand" size={32} color="#2B7C85" />
                 </View>
                 <Text style={styles.goalLabel}>Faltam:</Text>
-                <Text style={styles.goalValue}>15:00 hrs</Text>
+                <Text style={styles.goalValue}>{calculateRemainingHours()}</Text>
               </View>
             </View>
           </View>
