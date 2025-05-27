@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Dimensions, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Dimensions, Platform, Share, Alert } from 'react-native';
 import { Ionicons, MaterialIcons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { colors, headerTheme, cardTheme, buttonTheme } from '../constants/colors';
@@ -103,6 +103,45 @@ export default function HomeScreen({ navigation }) {
     setDate(new Date(newDate));
   };
 
+  const handleShareReport = async () => {
+    try {
+      // Formata o mês e ano para o título
+      const reportMonth = date.toLocaleString('pt-BR', { month: 'long' }).replace(/^\w/, c => c.toUpperCase());
+      const reportYear = date.getFullYear();
+
+      // Constrói a mensagem
+      let message = `Relatório de Atividades - ${reportMonth}/${reportYear}\n\n`;
+      
+      // Adiciona informações do usuário se disponível
+      if (personalInfo.name) {
+        message += `${personalInfo.name}\n\n`;
+      }
+
+      // Adiciona resumo
+      message += `Resumo do Mês:\n`;
+      message += `Total de Horas: ${monthlyData.totalHours}\n`;
+      message += `Estudos: ${monthlyData.totalStudies}\n`;
+      
+      // Adiciona meta se configurada
+      if (goals.monthlyHours > 0) {
+        const goalFormatted = formatGoalHours(goals.monthlyHours).formatted;
+        message += `Meta Mensal: ${goalFormatted}\n`;
+        message += `Faltam: ${calculateRemainingHours()}`;
+      }
+
+      // Compartilha o relatório
+      await Share.share({
+        message,
+        title: `Relatório de Atividades - ${reportMonth}/${reportYear}`,
+      });
+    } catch (error) {
+      Alert.alert(
+        'Erro',
+        'Não foi possível compartilhar o relatório. Tente novamente.'
+      );
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -138,7 +177,10 @@ export default function HomeScreen({ navigation }) {
               <Text style={styles.sectionTitle}>Relatório</Text>
             )}
             <View style={styles.actionButtons}>
-              <TouchableOpacity style={styles.addButton}>
+              <TouchableOpacity 
+                style={styles.addButton}
+                onPress={handleShareReport}
+              >
                 <Ionicons name="paper-plane-outline" size={32} color={colors.action} />
               </TouchableOpacity>
               <TouchableOpacity 
