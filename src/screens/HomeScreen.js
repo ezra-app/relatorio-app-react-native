@@ -1,16 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Dimensions, Platform } from 'react-native';
 import { Ionicons, MaterialIcons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { colors, headerTheme, cardTheme, buttonTheme } from '../constants/colors';
+import { useReports } from '../contexts/ReportContext';
+import { dateUtils } from '../utils/dateUtils';
 
 export default function HomeScreen({ navigation }) {
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
+  const [monthlyData, setMonthlyData] = useState({
+    totalHours: "00:00",
+    totalStudies: 0
+  });
   
+  const { items: reports, loadItems } = useReports();
   const month = date.toLocaleString('pt-BR', { month: 'long' }).replace(/^\w/, c => c.toUpperCase());
   const year = date.getFullYear();
-  const screenWidth = Dimensions.get('window').width;
+
+  // Carrega os relatórios ao montar o componente
+  useEffect(() => {
+    loadItems();
+  }, []);
+
+  // Calcula os totais quando a data ou os relatórios mudam
+  useEffect(() => {
+    calculateMonthlyTotals();
+  }, [date, reports]);
+
+  const calculateMonthlyTotals = () => {
+    const { start, end } = dateUtils.getMonthRange(date);
+    
+    const monthReports = reports.filter(report => 
+      dateUtils.isDateInRange(new Date(report.date), start, end)
+    );
+
+    const totalDuration = monthReports.reduce((sum, report) => sum + report.duration, 0);
+    const totalStudies = monthReports.reduce((sum, report) => sum + report.studyHours, 0);
+
+    setMonthlyData({
+      totalHours: dateUtils.formatDuration(totalDuration),
+      totalStudies
+    });
+  };
 
   const showDatepicker = () => {
     setShow(true);
@@ -70,7 +102,7 @@ export default function HomeScreen({ navigation }) {
                   </View>
                   <View style={styles.statTextContainer}>
                     <Text style={styles.statLabel}>Horas:</Text>
-                    <Text style={styles.statValue}>00:00</Text>
+                    <Text style={styles.statValue}>{monthlyData.totalHours}</Text>
                   </View>
                 </View>
               </View>
@@ -82,7 +114,7 @@ export default function HomeScreen({ navigation }) {
                   </View>
                   <View style={styles.statTextContainer}>
                     <Text style={styles.statLabel}>Estudos:</Text>
-                    <Text style={styles.statValue}>0</Text>
+                    <Text style={styles.statValue}>{monthlyData.totalStudies}</Text>
                   </View>
                 </View>
               </View>

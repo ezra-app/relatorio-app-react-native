@@ -14,8 +14,10 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { colors, headerTheme, inputTheme, buttonTheme } from '../constants/colors';
+import { useReports } from '../contexts/ReportContext';
 
 export default function AddReportScreen({ navigation }) {
+  const { createItem } = useReports();
   const [date, setDate] = useState(new Date());
   const [hours, setHours] = useState({ hours: 0, minutes: 0 });
   const [studies, setStudies] = useState('0');
@@ -100,9 +102,23 @@ export default function AddReportScreen({ navigation }) {
     }
   };
 
-  const handleSubmit = () => {
-    // TODO: Implementar salvamento no banco de dados
-    navigation.goBack();
+  const handleSubmit = async () => {
+    try {
+      const totalMinutes = (hours.hours * 60) + hours.minutes;
+      
+      const reportData = {
+        date: date.toISOString(),
+        duration: totalMinutes,
+        studyHours: parseInt(studies, 10),
+        observations: observations.trim(),
+      };
+
+      await createItem(reportData);
+      navigation.goBack();
+    } catch (error) {
+      console.error('Erro ao salvar relatório:', error);
+      // TODO: Mostrar mensagem de erro para o usuário
+    }
   };
 
   const formatDate = (date) => {
