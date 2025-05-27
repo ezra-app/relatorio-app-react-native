@@ -5,6 +5,7 @@ import RNDateTimePicker from '@react-native-community/datetimepicker';
 import { colors, headerTheme, cardTheme, buttonTheme } from '../constants/colors';
 import { useReports } from '../contexts/ReportContext';
 import { useGoals } from '../contexts/GoalsContext';
+import { usePersonalInfo } from '../contexts/PersonalInfoContext';
 import { dateUtils } from '../utils/dateUtils';
 
 export default function HomeScreen({ navigation }) {
@@ -18,6 +19,8 @@ export default function HomeScreen({ navigation }) {
   
   const { items: reports, loadItems } = useReports();
   const { goals, formatGoalHours } = useGoals();
+  const { personalInfo } = usePersonalInfo();
+  const firstName = personalInfo?.name?.split(' ')[0] || '';
   const month = date.toLocaleString('pt-BR', { month: 'long' }).replace(/^\w/, c => c.toUpperCase());
   const year = date.getFullYear();
 
@@ -119,8 +122,21 @@ export default function HomeScreen({ navigation }) {
         {/* Relatório Section */}
         <View style={styles.section}>
           <View style={styles.sectionTitleContainer}>
-            <MaterialCommunityIcons name="notebook-outline" size={32} color={colors.secondary} />
-            <Text style={styles.sectionTitle}>Relatório</Text>
+            {!firstName && (
+              <MaterialCommunityIcons 
+                name="notebook-outline"
+                size={32}
+                color={colors.secondary}
+                style={styles.sectionIcon} 
+              />
+            )}
+            {firstName ? (
+              <View style={styles.greetingContainer}>
+                <Text style={styles.greetingWithName}>Olá, {firstName}</Text>
+              </View>
+            ) : (
+              <Text style={styles.sectionTitle}>Relatório</Text>
+            )}
             <View style={styles.actionButtons}>
               <TouchableOpacity style={styles.addButton}>
                 <Ionicons name="paper-plane-outline" size={32} color={colors.action} />
@@ -315,11 +331,22 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
+  sectionIcon: {
+    marginRight: 12,
+  },
+  greetingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  greetingWithName: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: colors.text.primary,
+  },
   sectionTitle: {
     fontSize: 28,
     fontWeight: 'bold',
     color: colors.text.primary,
-    marginLeft: 15,
     flex: 1,
   },
   actionButtons: {

@@ -23,11 +23,6 @@ export default function PersonalInfoScreen({ navigation }) {
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
-    if (!name.trim()) {
-      Alert.alert('Atenção', 'Por favor, preencha seu nome');
-      return;
-    }
-
     try {
       setSaving(true);
       await savePersonalInfo({ name, email });
@@ -73,14 +68,14 @@ export default function PersonalInfoScreen({ navigation }) {
           <View style={styles.inputGroup}>
             <View style={styles.labelContainer}>
               <Ionicons name="person-outline" size={28} color={colors.secondary} />
-              <Text style={styles.label}>Nome *</Text>
+              <Text style={styles.label}>Nome</Text>
             </View>
             <View style={styles.input}>
               <TextInput
                 style={styles.textInput}
                 value={name}
                 onChangeText={setName}
-                placeholder="Seu nome"
+                placeholder="Seu nome (opcional)"
                 placeholderTextColor={colors.text.secondary}
                 autoCapitalize="words"
               />
