@@ -70,7 +70,10 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>{`${month} ${year}`}</Text>
         <View style={styles.headerButtons}>
-          <TouchableOpacity style={styles.headerButton}>
+          <TouchableOpacity 
+            style={styles.headerButton}
+            onPress={() => navigation.navigate('Settings')}
+          >
             <Ionicons name="settings-outline" size={32} color={headerTheme.icon} />
           </TouchableOpacity>
         </View>
