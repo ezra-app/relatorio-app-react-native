@@ -512,10 +512,12 @@ const styles = StyleSheet.create({
   },
   goalsContent: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
   goalsWrapper: {
+    flexDirection: 'column',
     gap: 15,
+    paddingTop: 10,
   },
   goalCard: {
     flexDirection: 'row',
@@ -556,7 +558,6 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
     borderRadius: 12,
-    margin: 15,
     minHeight: 200,
     justifyContent: 'center',
   },

@@ -20,81 +20,27 @@ export default function MonthlyGoalScreen({ navigation }) {
   const [saving, setSaving] = useState(false);
 
   const initialHours = formatGoalHours(goals.monthlyHours);
-  const [hours, setHours] = useState({
-    hours: initialHours.hours,
-    minutes: initialHours.minutes,
-  });
+  const [hours, setHours] = useState(initialHours.hours);
 
   const increaseHours = () => {
-    setHours(prev => ({
-      ...prev,
-      hours: prev.hours + 1
-    }));
+    setHours(prev => prev + 1);
   };
 
   const decreaseHours = () => {
-    setHours(prev => ({
-      ...prev,
-      hours: Math.max(0, prev.hours - 1)
-    }));
-  };
-
-  const increaseMinutes = () => {
-    const newMinutes = hours.minutes + 15;
-    if (newMinutes >= 60) {
-      setHours(prev => ({
-        hours: prev.hours + 1,
-        minutes: 0
-      }));
-    } else {
-      setHours(prev => ({
-        ...prev,
-        minutes: newMinutes
-      }));
-    }
-  };
-
-  const decreaseMinutes = () => {
-    const newMinutes = hours.minutes - 15;
-    if (newMinutes < 0) {
-      if (hours.hours > 0) {
-        setHours(prev => ({
-          hours: prev.hours - 1,
-          minutes: 45
-        }));
-      }
-    } else {
-      setHours(prev => ({
-        ...prev,
-        minutes: newMinutes
-      }));
-    }
+    setHours(prev => Math.max(0, prev - 1));
   };
 
   const validateAndUpdateHours = (text) => {
     const number = parseInt(text) || 0;
     if (number >= 0) {
-      setHours(prev => ({
-        ...prev,
-        hours: number
-      }));
-    }
-  };
-
-  const validateAndUpdateMinutes = (text) => {
-    const number = parseInt(text) || 0;
-    if (number >= 0 && number < 60) {
-      setHours(prev => ({
-        ...prev,
-        minutes: number
-      }));
+      setHours(number);
     }
   };
 
   const handleSave = async () => {
     try {
       setSaving(true);
-      await updateMonthlyGoal(hours.hours, hours.minutes);
+      await updateMonthlyGoal(hours, 0); // Sempre usa 0 para minutos
       navigation.goBack();
     } catch (error) {
       Alert.alert(
@@ -106,8 +52,8 @@ export default function MonthlyGoalScreen({ navigation }) {
     }
   };
 
-  const formatHours = (hours, minutes) => {
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+  const formatHours = (hours) => {
+    return `${String(hours).padStart(2, '0')}:00`;
   };
 
   if (loading) {
@@ -147,7 +93,7 @@ export default function MonthlyGoalScreen({ navigation }) {
         >
           <View style={styles.hoursContent}>
             <Text style={styles.hoursLabel}>Meta atual:</Text>
-            <Text style={styles.hoursValue}>{formatHours(hours.hours, hours.minutes)}</Text>
+            <Text style={styles.hoursValue}>{formatHours(hours)}</Text>
             <Text style={styles.hoursUnit}>horas</Text>
           </View>
         </TouchableOpacity>
@@ -185,37 +131,16 @@ export default function MonthlyGoalScreen({ navigation }) {
                 </TouchableOpacity>
                 <TextInput
                   style={styles.pickerInput}
-                  value={hours.hours.toString()}
+                  value={hours.toString()}
                   onChangeText={validateAndUpdateHours}
                   keyboardType="number-pad"
-                  maxLength={2}
+                  maxLength={3}
                   selectTextOnFocus
                 />
                 <TouchableOpacity onPress={decreaseHours} style={styles.pickerButton}>
                   <Ionicons name="chevron-down" size={24} color="#2B7C85" />
                 </TouchableOpacity>
                 <Text style={styles.pickerLabel}>horas</Text>
-              </View>
-
-              <Text style={styles.pickerSeparator}>:</Text>
-
-              {/* Minutos */}
-              <View style={styles.pickerColumn}>
-                <TouchableOpacity onPress={increaseMinutes} style={styles.pickerButton}>
-                  <Ionicons name="chevron-up" size={24} color="#2B7C85" />
-                </TouchableOpacity>
-                <TextInput
-                  style={styles.pickerInput}
-                  value={hours.minutes.toString()}
-                  onChangeText={validateAndUpdateMinutes}
-                  keyboardType="number-pad"
-                  maxLength={2}
-                  selectTextOnFocus
-                />
-                <TouchableOpacity onPress={decreaseMinutes} style={styles.pickerButton}>
-                  <Ionicons name="chevron-down" size={24} color="#2B7C85" />
-                </TouchableOpacity>
-                <Text style={styles.pickerLabel}>minutos</Text>
               </View>
             </View>
 
@@ -344,7 +269,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 15,
     marginBottom: 20,
   },
   pickerColumn: {
@@ -354,22 +278,16 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   pickerInput: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 'bold',
-    color: colors.text.primary,
     textAlign: 'center',
-    width: 60,
-    padding: 5,
+    width: 80,
+    color: colors.text.primary,
   },
   pickerLabel: {
     fontSize: 14,
     color: colors.text.secondary,
     marginTop: 5,
-  },
-  pickerSeparator: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: colors.text.primary,
   },
   modalButtons: {
     flexDirection: 'row',
@@ -390,7 +308,7 @@ const styles = StyleSheet.create({
   },
   modalButtonText: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: 'bold',
   },
   modalButtonTextCancel: {
     color: colors.text.primary,
