@@ -6,6 +6,7 @@ import { colors, headerTheme, cardTheme, buttonTheme } from '../constants/colors
 import { useReports } from '../contexts/ReportContext';
 import { useGoals } from '../contexts/GoalsContext';
 import { usePersonalInfo } from '../contexts/PersonalInfoContext';
+import { useWorkDays } from '../contexts/WorkDaysContext';
 import { dateUtils } from '../utils/dateUtils';
 
 export default function HomeScreen({ navigation }) {
@@ -20,6 +21,7 @@ export default function HomeScreen({ navigation }) {
   const { items: reports, loadItems } = useReports();
   const { goals, formatGoalHours } = useGoals();
   const { personalInfo } = usePersonalInfo();
+  const { selectedDays } = useWorkDays();
   const firstName = personalInfo?.name?.split(' ')[0] || '';
   const month = date.toLocaleString('pt-BR', { month: 'long' }).replace(/^\w/, c => c.toUpperCase());
   const year = date.getFullYear();
@@ -63,13 +65,20 @@ export default function HomeScreen({ navigation }) {
 
     const remainingMinutes = monthlyHours - totalMinutes;
     const today = new Date();
-    const lastDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-    const remainingDays = lastDayOfMonth - today.getDate() + 1;
+    
+    // Se estamos em um mês diferente do atual, usa o primeiro dia do mês selecionado
+    const startDate = date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear()
+      ? today // Se é o mês atual, começa de hoje
+      : new Date(date.getFullYear(), date.getMonth(), 1); // Se é outro mês, começa do dia 1
 
-    if (remainingDays <= 0) return "00:00";
+    // Calcula os dias úteis restantes
+    const remainingWorkingDays = dateUtils.getRemainingWorkingDays(startDate, selectedDays);
+    
+    // Se não há dias úteis restantes, retorna 00:00
+    if (remainingWorkingDays === 0) return "00:00";
 
-    const dailyMinutes = Math.ceil(remainingMinutes / remainingDays);
-    return dateUtils.formatDuration(dailyMinutes);
+    // Calcula a meta diária baseada nos dias úteis restantes
+    return dateUtils.formatDuration(Math.ceil(remainingMinutes / remainingWorkingDays));
   };
 
   // Calcula quanto falta para atingir a meta
